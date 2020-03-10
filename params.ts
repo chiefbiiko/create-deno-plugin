@@ -1,4 +1,4 @@
-import { basename, decode, existsSync, parseArgs } from "./deps.ts";
+import { basename, decode, existsSync, parse } from "./deps.ts";
 
 const NEW_LINE_REGEX: RegExp = /\r?\n/;
 const GIT_CONFIG_USER_SECTION_PATTERN: RegExp = /\[user\]/i;
@@ -19,8 +19,14 @@ function gitAuthorEmail(configFile: string): {
 
   const lines: string[] = fileContents
     .split(NEW_LINE_REGEX)
-    .map((line: string): string => GIT_CONFIG_USER_SECTION_PATTERN.test(line) ? line.trim().toLowerCase() : line.trim())
-    .filter((line: string): boolean => !!line && !line.startsWith("#") && !line.startsWith(";"));
+    .map((line: string): string =>
+      GIT_CONFIG_USER_SECTION_PATTERN.test(line)
+        ? line.trim().toLowerCase()
+        : line.trim()
+    )
+    .filter((line: string): boolean =>
+      !!line && !line.startsWith("#") && !line.startsWith(";")
+    );
 
   const head: number = lines.indexOf("[user]") + 1;
 
@@ -35,17 +41,20 @@ function gitAuthorEmail(configFile: string): {
   const userLines: string[] = lines.slice(head, tail);
 
   const userSection: { [key: string]: string } = userLines
-    .reduce((acc: { [key: string]: string }, userLine: string): {[key: string]: string;} => {
-      const [key, value]: string[] = userLine
-      .split("=")
-      .map(( part: string ): string => part.trim());
+    .reduce(
+      (acc: { [key: string]: string }, userLine: string): {
+        [key: string]: string;
+      } => {
+        const [key, value]: string[] = userLine
+          .split("=")
+          .map((part: string): string => part.trim());
 
-      acc[key.toLowerCase()] = value;
+        acc[key.toLowerCase()] = value;
 
-      return acc;
-    },
-    {}
-  );
+        return acc;
+      },
+      {}
+    );
 
   return {
     author: userSection.name,
@@ -67,8 +76,10 @@ const globalGitConfig: {
   email: undefined | string;
 } = gitAuthorEmail(`${HOME}/.gitconfig`);
 
-const argv: { [key: string]: string } = parseArgs(Deno.args, {
+const argv: { [key: string]: any } = parse(Deno.args, {
   string: ["name", "author", "email"],
+  boolean: ["version", "help", "async"],
+  alias: { help: "h", version: "v" },
   default: {
     author: ENV.CARGO_NAME ||
       ENV.GIT_AUTHOR_NAME ||
@@ -96,9 +107,14 @@ export const params: {
   author: string;
   email: string;
   path: string;
+  version?: boolean;
+  help?: boolean;
+  async?: boolean;
 } = {
   name: argv.name,
   author: argv.author,
   email: argv.email,
-  path: argv._[0] || Deno.cwd()
+  path: argv._[0] || Deno.cwd(),
+  version: argv.version,
+  help: argv.help
 };

@@ -1,51 +1,52 @@
-export const LIB_TS: string = `
-const filenameBase = "test_plugin";
-
-let filenameSuffix = ".so";
-let filenamePrefix = "lib";
-
-if (Deno.build.os === "win") {
-  filenameSuffix = ".dll";
-  filenamePrefix = "";
-}
-if (Deno.build.os === "mac") {
-  filenameSuffix = ".dylib";
-}
-
-const filename = \`../target/\${Deno.args[0]}/\${filenamePrefix}\${filenameBase}\${filenameSuffix}\`;
-
-const { testSync, testAsync } = Deno.openPlugin(filename).ops;
-
-const textDecoder = new TextDecoder();
-
-// TODO: indicate control buf and zero copy length requirements
-// TODO: import std.strings.encode
-// TODO: shortline filename derivation
-
-function runTestSync() {
-  const response = testSync.dispatch(
-    new Uint8Array([116, 101, 115, 116]),
-    new Uint8Array([116, 101, 115, 116])
-  );
-
-  console.log(\`Plugin Sync Response:  \${textDecoder.decode(response)}\`);
-}
-
-testAsync.setAsyncHandler(response => {
-  console.log(\`Plugin Async Response:  \${textDecoder.decode(response)}\`);
-});
-
-function runTestAsync() {
-  const response = testAsync.dispatch(
-    new Uint8Array([116, 101, 115, 116]),
-    new Uint8Array([116, 101, 115, 116])
-  );
-
-  if (response) {
-    throw new Error("Expected nullish async response!");
+export function libTS(
+  { name, async }: {
+    name: string;
+    author: string;
+    email: string;
+    path: string;
+    version?: boolean;
+    help?: boolean;
+    async?: boolean;
   }
+): string {
+  return `
+// TODO: indicate control buf and zero copy length requirements
+
+const pluginPath: string = [
+  "target",
+  "debug",
+  Deno.build.os === "win" ? "" : "lib",
+  "${name}".replace(/-/g, "_"),
+  Deno.build.os === "win" ? ".dll" : Deno.build.os === "mac" ? ".dylib" : ".so"
+].join("/");
+
+const plugin = Deno.openPlugin(pluginPath);
+
+export function syncWrapper(buf: Uint8Array): null | Uint8Array {
+  const response: null | Uint8Array = plugin.ops.testSync.dispatch(
+    new Uint8Array([116, 101, 115, 116]), // control
+    buf                                   // zero copy
+  );
+
+  return response;
 }
 
-runTestSync();
-runTestAsync();
-`.trim();
+${
+async
+?
+`export function asyncWrapper(buf: Uint8Array): Promise<null | Uint8Array> {
+  return new Promise((resolve, reject) => {
+    // FIXME: promises won't necessarily settle in order
+    plugin.ops.testAsync.setAsyncHandler(resolve);
+
+    plugin.ops.testAsync.dispatch(
+      new Uint8Array([116, 101, 115, 116]), // control
+      buf                                   // zero copy
+    );
+  });
+}`
+:
+""
+}
+  `.trim();
+}
