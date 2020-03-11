@@ -13,7 +13,7 @@ export function libRS(
 #[macro_use]
 extern crate deno_core;${async ? "\nextern crate futures;" : ""}
 
-use deno_core::{Buf, CoreOp, Op, PluginInitContext, ZeroCopyBuf};${async ? "\nuse futures::future::FutureExt;" : ""}
+use deno_core::{Buf, CoreOp, PluginInitContext, ZeroCopyBuf};${async ? "\nuse futures::future::FutureExt;" : ""}
 
 fn init(context: &mut dyn PluginInitContext) {
   context.register_op("testSync", Box::new(op_test_sync));${async ? '\ncontext.register_op("testAsync", Box::new(op_test_async));' : ""}
@@ -27,7 +27,7 @@ pub fn op_test_sync(data: &[u8], zero_copy: Option<ZeroCopyBuf>) -> CoreOp {
   let result = b"wave from plugin op sync deno rust";
   let result_box: Buf = Box::new(*result);
 
-  Op::Sync(result_box)
+  CoreOp::Sync(result_box)
 }
 
 ${
@@ -43,7 +43,7 @@ async
     Ok(result_box)
   };
 
-  Op::Async(fut.boxed())
+  CoreOp::Async(fut.boxed())
 }`
 :
 ""

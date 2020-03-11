@@ -34,7 +34,7 @@ function gitAuthorEmail(configFile: string): {
     .slice(head)
     .reduce(
       (acc: number, line: string, i: number): number =>
-        line.startsWith("[") ? i : acc,
+        line.startsWith("[") && acc === Infinity ? i : acc,
       Infinity
     );
 
@@ -100,7 +100,9 @@ const argv: { [key: string]: any } = parse(Deno.args, {
   }
 });
 
-argv.name = argv.name ? basename(argv.name) : "deno-plugin";
+const path: string = argv._[0] || Deno.cwd();
+
+argv.name = argv.name ? argv.name : basename(path);
 
 export const params: {
   name: string;
@@ -114,7 +116,8 @@ export const params: {
   name: argv.name,
   author: argv.author,
   email: argv.email,
-  path: argv._[0] || Deno.cwd(),
+  path,
   version: argv.version,
-  help: argv.help
+  help: argv.help,
+  async: argv.async
 };

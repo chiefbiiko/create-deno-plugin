@@ -10,8 +10,6 @@ export function libTS(
   }
 ): string {
   return `
-// TODO: indicate control buf and zero copy length requirements
-
 const pluginPath: string = [
   "target",
   "debug",
@@ -22,7 +20,7 @@ const pluginPath: string = [
 
 const plugin = Deno.openPlugin(pluginPath);
 
-export function syncWrapper(buf: Uint8Array): null | Uint8Array {
+export function syncWrapper(): null | Uint8Array {
   const response: null | Uint8Array = plugin.ops.testSync.dispatch(
     new Uint8Array([116, 101, 115, 116]), // control
     buf                                   // zero copy
@@ -34,14 +32,14 @@ export function syncWrapper(buf: Uint8Array): null | Uint8Array {
 ${
 async
 ?
-`export function asyncWrapper(buf: Uint8Array): Promise<null | Uint8Array> {
+`export function asyncWrapper(): Promise<null | Uint8Array> {
   return new Promise((resolve, reject) => {
     // FIXME: promises won't necessarily settle in order
     plugin.ops.testAsync.setAsyncHandler(resolve);
 
     plugin.ops.testAsync.dispatch(
       new Uint8Array([116, 101, 115, 116]), // control
-      buf                                   // zero copy
+      new Uint8Array(0)                     // zero copy
     );
   });
 }`
