@@ -8,14 +8,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # TODO: readd windows-latest and check 4 files in run_tests
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - name: clone repo
         uses: actions/checkout@v2.0.0
       - name: install deno
         uses: denolib/setup-deno@v1.2.0
       - name: run tests
+        if: matrix.os != "windows-latest"
         run: |
           deno --allow-env --allow-read --allow-write ./main.ts ./da/plug
           (ls \

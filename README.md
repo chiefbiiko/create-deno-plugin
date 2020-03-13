@@ -1,5 +1,7 @@
 # create-deno-plugin
 
+![ci](https://github.com/chiefbiiko/create-deno-plugin/workflows/ci/badge.svg)
+
 a little tool to bootstrap deno plugins
 
 ## install
