@@ -1,4 +1,4 @@
-import { basename, decode, existsSync, parse } from "./deps.ts";
+import { basename, decode, existsSync, join, parse } from "./deps.ts";
 
 const NEW_LINE_REGEX: RegExp = /\r?\n/;
 const GIT_CONFIG_USER_SECTION_PATTERN: RegExp = /\[user\]/i;
@@ -69,12 +69,12 @@ const HOME: string = Deno.dir("home") ?? "/";
 const localGitConfig: {
   author: undefined | string;
   email: undefined | string;
-} = gitAuthorEmail(`${CWD}/.git/config`);
+} = gitAuthorEmail(join(CWD, ".git", "config"));
 
 const globalGitConfig: {
   author: undefined | string;
   email: undefined | string;
-} = gitAuthorEmail(`${HOME}/.gitconfig`);
+} = gitAuthorEmail(join(HOME, ".gitconfig"));
 
 const argv: { [key: string]: any } = parse(Deno.args, {
   string: ["name", "author", "email"],
