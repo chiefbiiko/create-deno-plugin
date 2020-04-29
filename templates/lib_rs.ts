@@ -7,16 +7,20 @@ export function libRS(
     version?: boolean;
     help?: boolean;
     async?: boolean;
-  }
+  },
 ): string {
   return `
 #[macro_use]
 extern crate deno_core;${async ? "\nextern crate futures;" : ""}
 
-use deno_core::{Buf, CoreOp, PluginInitContext, ZeroCopyBuf};${async ? "\nuse futures::future::FutureExt;" : ""}
+use deno_core::{Buf, CoreOp, PluginInitContext, ZeroCopyBuf};${async
+    ? "\nuse futures::future::FutureExt;"
+    : ""}
 
 fn init(context: &mut dyn PluginInitContext) {
-  context.register_op("testSync", Box::new(op_test_sync));${async ? '\ncontext.register_op("testAsync", Box::new(op_test_async));' : ""}
+  context.register_op("testSync", Box::new(op_test_sync));${async
+    ? '\ncontext.register_op("testAsync", Box::new(op_test_async));'
+    : ""}
 }
 
 init_fn!(init);
@@ -30,10 +34,8 @@ pub fn op_test_sync(data: &[u8], zero_copy: Option<ZeroCopyBuf>) -> CoreOp {
   CoreOp::Sync(result_box)
 }
 
-${
-async
-?
-`pub fn op_test_async(data: &[u8], zero_copy: Option<ZeroCopyBuf>) -> CoreOp {
+${async
+    ? `pub fn op_test_async(data: &[u8], zero_copy: Option<ZeroCopyBuf>) -> CoreOp {
   let fut = async move {
     // mutate zero_copy if u like
 
@@ -45,8 +47,6 @@ async
 
   CoreOp::Async(fut.boxed())
 }`
-:
-""
-}
+    : ""}
   `.trim();
 }

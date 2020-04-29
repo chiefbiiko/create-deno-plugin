@@ -7,7 +7,7 @@ export function cargoToml(
     version?: boolean;
     help?: boolean;
     async?: boolean;
-  }
+  },
 ): string {
   return `
 [package]

@@ -7,7 +7,7 @@ export function modTS(
     version?: boolean;
     help?: boolean;
     async?: boolean;
-  }
+  },
 ): string {
   return `
 const pluginPath: string = [
@@ -29,10 +29,8 @@ export function syncWrapper(): null | Uint8Array {
   return response;
 }
 
-${
-async
-?
-`export function asyncWrapper(): Promise<null | Uint8Array> {
+${async
+    ? `export function asyncWrapper(): Promise<null | Uint8Array> {
   return new Promise((resolve, reject) => {
     // FIXME: promises won't necessarily settle in order
     plugin.ops.testAsync.setAsyncHandler(resolve);
@@ -43,8 +41,6 @@ async
     );
   });
 }`
-:
-""
-}
+    : ""}
   `.trim();
 }

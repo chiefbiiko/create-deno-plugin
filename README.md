@@ -15,7 +15,7 @@ deno install \
   --allow-write \
   --dir=/usr/local/bin \
   create-deno-plugin \
-  https://denopkg.com/chiefbiiko/create-deno-plugin@v0.1.0/main.ts
+  https://denopkg.com/chiefbiiko/create-deno-plugin@v0.2.0/main.ts
 ```
 
 ## usage
@@ -34,12 +34,15 @@ OPTIONS:
       --author     set the plugin author's name
       --email      set the plugin author's email
       --async      include async function stubs
+  -f, --force      overwrite existing files
 
   if not provided the plugin name, author and its email address will be read
   from environment variables and git config files.
 
   if async is not set no async function stubs will be included in lib.rs and
-  lib.ts
+  mod.ts
+
+  
 
 ARGS:
   [path]    directory path of the new plugin

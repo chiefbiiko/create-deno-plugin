@@ -35,7 +35,7 @@ function gitAuthorEmail(configFile: string): {
     .reduce(
       (acc: number, line: string, i: number): number =>
         line.startsWith("[") && acc === Infinity ? i : acc,
-      Infinity
+      Infinity,
     );
 
   const userLines: string[] = lines.slice(head, tail);
@@ -53,12 +53,12 @@ function gitAuthorEmail(configFile: string): {
 
         return acc;
       },
-      {}
+      {},
     );
 
   return {
     author: userSection.name,
-    email: userSection.email
+    email: userSection.email,
   };
 }
 
@@ -78,8 +78,8 @@ const globalGitConfig: {
 
 const argv: { [key: string]: any } = parse(Deno.args, {
   string: ["name", "author", "email"],
-  boolean: ["version", "help", "async"],
-  alias: { help: "h", version: "v" },
+  boolean: ["version", "help", "async", "force"],
+  alias: { help: "h", version: "v", force: "f" },
   default: {
     author: ENV.CARGO_NAME ||
       ENV.GIT_AUTHOR_NAME ||
@@ -96,8 +96,8 @@ const argv: { [key: string]: any } = parse(Deno.args, {
       localGitConfig.email ||
       globalGitConfig.email ||
       ENV.EMAIL ||
-      "unknown"
-  }
+      "unknown",
+  },
 });
 
 const path: string = argv._[0] || Deno.cwd();
@@ -112,6 +112,7 @@ export const params: {
   version?: boolean;
   help?: boolean;
   async?: boolean;
+  force?: boolean;
 } = {
   name: argv.name,
   author: argv.author,
@@ -119,5 +120,6 @@ export const params: {
   path,
   version: argv.version,
   help: argv.help,
-  async: argv.async
+  async: argv.async,
+  force: argv.force,
 };
