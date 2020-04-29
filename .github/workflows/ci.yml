@@ -31,6 +31,6 @@ jobs:
         if: startsWith(matrix.os, 'win')
         run: |
           if not exist ./da/plug/.gitignore exit 1
-          if not exist ./da/plug/Cargo.toml exit 1
-          if not exist ./da/plug/src/lib.rs exit 1
-          if not exist ./da/plug/mod.ts exit 1
+          if not exist ./da/plug/Cargo.toml exit 2
+          if not exist ./da/plug/src/lib.rs exit 3
+          if not exist ./da/plug/mod.ts exit 4
