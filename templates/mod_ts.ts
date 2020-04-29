@@ -1,4 +1,4 @@
-export function libTS(
+export function modTS(
   { name, async }: {
     name: string;
     author: string;

@@ -21,7 +21,7 @@ deno install \
 ## usage
 
 ``` sh
-create-deno-plugin v0.1.0
+create-deno-plugin v0.2.0
 
 blueprints a deno plugin
 

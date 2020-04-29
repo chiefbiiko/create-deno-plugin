@@ -3,9 +3,9 @@ import { params } from "./params.ts";
 import { GIT_IGNORE } from "./templates/git_ignore.ts";
 import { cargoToml } from "./templates/cargo_toml.ts";
 import { libRS } from "./templates/lib_rs.ts";
-import { libTS } from "./templates/lib_ts.ts";
+import { modTS } from "./templates/mod_ts.ts";
 
-const VERSION: string = "v0.1.0";
+const VERSION: string = "v0.2.0";
 
 const HELP: string = `
 create-deno-plugin ${VERSION}
@@ -48,6 +48,6 @@ Deno.mkdirSync(join(params.path, "src"), { recursive: true });
 await Promise.allSettled([
   Deno.writeFile(join(params.path, ".gitignore"), encode(GIT_IGNORE)),
   Deno.writeFile(join(params.path, "Cargo.toml"), encode(cargoToml(params))),
-  Deno.writeFile(join(params.path, "src/lib.rs"), encode(libRS(params))),
-  Deno.writeFile(join(params.path, "lib.ts"), encode(libTS(params)))
+  Deno.writeFile(join(params.path, "src", "lib.rs"), encode(libRS(params))),
+  Deno.writeFile(join(params.path, "mod.ts"), encode(modTS(params)))
 ]);
