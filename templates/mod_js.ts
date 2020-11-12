@@ -17,7 +17,7 @@ var pluginPath = [
   "${name}".replace(/-/g, "_") +
   (Deno.build.os + "" === "windows"
     ? ".dll"
-    : Deno.build.os + "" === "mac"
+    : Deno.build.os + "" === "darwin"
     ? ".dylib"
     : ".so"),
 ].join("/");
