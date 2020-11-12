@@ -13,15 +13,16 @@ deno install \
   --allow-env \
   --allow-read \
   --allow-write \
+  --unstable \
   --dir=/usr/local/bin \
   create-deno-plugin \
-  https://denopkg.com/chiefbiiko/create-deno-plugin@v0.2.0/main.ts
+  https://denopkg.com/chiefbiiko/create-deno-plugin@v0.3.0/main.ts
 ```
 
 ## usage
 
 ``` sh
-create-deno-plugin v0.2.0
+create-deno-plugin v0.3.0
 
 blueprints a deno plugin
 

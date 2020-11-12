@@ -1,6 +1,18 @@
-export { existsSync } from "https://deno.land/std@v0.41.0/fs/mod.ts";
-export { parse } from "https://deno.land/std@v0.41.0/flags/mod.ts";
-export { basename, join } from "https://deno.land/std@v0.41.0/path/mod.ts";
+// export { existsSync } from "https://deno.land/std@0.77.0/fs/mod.ts";
+export { parse } from "https://deno.land/std@0.77.0/flags/mod.ts";
+export { basename, join } from "https://deno.land/std@0.77.0/path/mod.ts";
+
+export function existsSync(filePath: string): boolean {
+  try {
+    Deno.lstatSync(filePath);
+    return true;
+  } catch (err) {
+    if (err instanceof Deno.errors.NotFound) {
+      return false;
+    }
+    throw err;
+  }
+}
 
 const textEncoder: TextEncoder = new TextEncoder();
 const textDecoder: TextDecoder = new TextDecoder();
