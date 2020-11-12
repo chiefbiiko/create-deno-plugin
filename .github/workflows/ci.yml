@@ -12,9 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2.0.0
 
-      - uses: denolib/setup-deno@master
+      - uses: denolib/setup-deno@v2
         with:
-          deno-version: 1.52.0
+          deno-version: v1.5.2
 
       - name: run a check on unix
         if: startsWith(matrix.os, 'win') == false
