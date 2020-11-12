@@ -20,6 +20,28 @@ deno install \
 ## usage
 
 ``` sh
+create-deno-plugin --async ./my-plugin
+cd ./my-plugin
+cargo build
+deno test --allow-plugin --unstable
+```
+
+the tool scaffolds as illustrated:
+
+```
+|-- my-plugin
+|   |-- .gitignore
+|   |-- Cargo.toml
+|   |-- src
+|   |   |-- lib.rs
+|   |-- mod.js
+|   |-- test.js
+```
+switching on `--async` will include async function stubs on the rust and deno side and in the test file
+
+## help
+
+``` sh
 create-deno-plugin v0.3.0
 
 blueprints a deno plugin
