@@ -20,6 +20,6 @@ edition = "2018"
 crate-type = ["cdylib"]
 
 [dependencies]
-deno_core = "0.39.0"${async ? '\nfutures = "0.3.4"' : ""}
+deno_core = "0.67.0"
   `.trim();
 }

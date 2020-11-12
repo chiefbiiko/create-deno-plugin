@@ -10,42 +10,30 @@ export function libRS(
   },
 ): string {
   return `
-#[macro_use]
-extern crate deno_core;${async ? "\nextern crate futures;" : ""}
+use deno_core::{${async ? "\n    futures::FutureExt," : ""}
+    plugin_api::{Interface, Op, ZeroCopyBuf},
+};
+use std::boxed::Box;
 
-use deno_core::{Buf, CoreOp, PluginInitContext, ZeroCopyBuf};${async
-    ? "\nuse futures::future::FutureExt;"
-    : ""}
-
-fn init(context: &mut dyn PluginInitContext) {
-  context.register_op("testSync", Box::new(op_test_sync));${async
-    ? '\ncontext.register_op("testAsync", Box::new(op_test_async));'
-    : ""}
+#[no_mangle]
+pub fn deno_plugin_init(interface: &mut dyn Interface) {
+    interface.register_op("syncOp", op_sync);${async ? '\n    interface.register_op("asyncOp", op_async);' : ""}
 }
 
-init_fn!(init);
-
-pub fn op_test_sync(data: &[u8], zero_copy: Option<ZeroCopyBuf>) -> CoreOp {
-  // mutate zero_copy if u like
-
-  let result = b"wave from plugin op sync deno rust";
-  let result_box: Buf = Box::new(*result);
-
-  CoreOp::Sync(result_box)
+pub fn op_sync(_interface: &mut dyn Interface, zero_copy: &mut [ZeroCopyBuf]) -> Op {
+    // impl code, maybe return a value and/or mutate zero_copy bufs...
+    if zero_copy.is_empty() {}
+    for (_idx, _buf) in zero_copy.to_vec().iter().enumerate() {}
+    zero_copy[0][0..4].copy_from_slice(b"ACAB");
+    // FYI: the empty slice return value below will appear as undefined in js
+    // if we return a lengthy slice here it will appear as a Uint8Array in js
+    Op::Sync(Box::new([]))
 }
 
 ${async
-    ? `pub fn op_test_async(data: &[u8], zero_copy: Option<ZeroCopyBuf>) -> CoreOp {
-  let fut = async move {
-    // mutate zero_copy if u like
-
-    let result = b"wave from plugin op async deno rust";
-    let result_box: Buf = Box::new(*result);
-
-    Ok(result_box)
-  };
-
-  CoreOp::Async(fut.boxed())
+    ? `pub fn op_async(_interface: &mut dyn Interface, _zero_copy: &mut [ZeroCopyBuf]) -> Op {
+    let fut = async move { Box::new(*b"ACAB") as Box<[u8]> };
+    Op::Async(fut.boxed())
 }`
     : ""}
   `.trim();

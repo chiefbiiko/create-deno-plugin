@@ -62,9 +62,9 @@ function gitAuthorEmail(configFile: string): {
   };
 }
 
-const ENV: { [key: string]: string } = Deno.env();
+const ENV: { [key: string]: string } = Deno.env.toObject();
 const CWD: string = Deno.cwd();
-const HOME: string = Deno.dir("home") ?? "/";
+const HOME: string = ENV.HOME || ENV.USERPROFILE || "/";
 
 const localGitConfig: {
   author: undefined | string;

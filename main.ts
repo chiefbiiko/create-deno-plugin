@@ -3,7 +3,8 @@ import { params } from "./params.ts";
 import { GIT_IGNORE } from "./templates/git_ignore.ts";
 import { cargoToml } from "./templates/cargo_toml.ts";
 import { libRS } from "./templates/lib_rs.ts";
-import { modTS } from "./templates/mod_ts.ts";
+import { modJS } from "./templates/mod_js.ts";
+import { testJS } from "./templates/test_js.ts";
 
 async function maybe(path: string, gen: () => Uint8Array): Promise<void> {
   if (params.force || !existsSync(path)) {
@@ -11,7 +12,7 @@ async function maybe(path: string, gen: () => Uint8Array): Promise<void> {
   }
 }
 
-const VERSION: string = "v0.2.0";
+const VERSION: string = "v0.3.0";
 
 const HELP: string = `
 create-deno-plugin ${VERSION}
@@ -34,8 +35,9 @@ OPTIONS:
 
   if async is not set no async function stubs will be included in lib.rs and
   mod.ts
-
   
+  NOTE: currently, you cannot use typescript wrapper modules - only vanilla js
+        see https://github.com/denoland/deno/issues/5525
 
 ARGS:
   [path]    directory path of the new plugin
@@ -68,7 +70,11 @@ await Promise.allSettled([
     (): Uint8Array => encode(libRS(params)),
   ),
   maybe(
-    join(params.path, "mod.ts"),
-    (): Uint8Array => encode(modTS(params)),
+    join(params.path, "mod.js"),
+    (): Uint8Array => encode(modJS(params)),
+  ),
+  maybe(
+    join(params.path, "test.js"),
+    (): Uint8Array => encode(testJS(params)),
   ),
 ]);

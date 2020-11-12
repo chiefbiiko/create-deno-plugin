@@ -11,26 +11,31 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - uses: actions/checkout@v2.0.0
+
       - uses: denolib/setup-deno@master
         with:
-          deno-version: 0.41.0
-      - name: run the tool
-        run: deno --allow-env --allow-read --allow-write ./main.ts ./da/plug
+          deno-version: 1.52.0
+
       - name: run a check on unix
         if: startsWith(matrix.os, 'win') == false
         run: |
-          (ls \
-            ./da/plug/.gitignore \
-            ./da/plug/Cargo.toml \
-            ./da/plug/src/lib.rs \
-            ./da/plug/mod.ts && \
-          exit 0) \
-          || \
-          exit 1
+          deno install \
+            --allow-env \
+            --allow-read \
+            --allow-write \
+            --unstable \
+            --dir=/usr/local/bin \
+            create-deno-plugin \
+            ./main.ts
+          create-deno-plugin --async ./demo
+          cd ./demo
+          cargo build
+          deno test --allow-plugin --unstable
+
       - name: run a check on windows
         if: startsWith(matrix.os, 'win')
         run: |
-          if not exist ./da/plug/.gitignore exit 1
-          if not exist ./da/plug/Cargo.toml exit 2
-          if not exist ./da/plug/src/lib.rs exit 3
-          if not exist ./da/plug/mod.ts exit 4
+          deno run --allow-env --allow-read --allow-write ./main.ts --async ./demo
+          cd ./demo
+          cargo build
+          deno test --allow-plugin --unstable

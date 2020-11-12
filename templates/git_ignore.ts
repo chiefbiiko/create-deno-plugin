@@ -1,1 +1,1 @@
-export const GIT_IGNORE: string = "target\n";
+export var GIT_IGNORE = "target\n";
