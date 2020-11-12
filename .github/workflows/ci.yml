@@ -23,7 +23,6 @@ jobs:
             --allow-env \
             --allow-read \
             --allow-write \
-            --root=/usr/local/bin \
             --name=create-deno-plugin \
             ./main.ts
           create-deno-plugin --async ./demo

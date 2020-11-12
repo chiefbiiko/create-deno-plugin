@@ -13,9 +13,7 @@ deno install \
   --allow-env \
   --allow-read \
   --allow-write \
-  --unstable \
-  --dir=/usr/local/bin \
-  create-deno-plugin \
+  --name=create-deno-plugin \
   https://denopkg.com/chiefbiiko/create-deno-plugin@v0.3.0/main.ts
 ```
 
@@ -42,8 +40,9 @@ OPTIONS:
 
   if async is not set no async function stubs will be included in lib.rs and
   mod.ts
-
   
+  NOTE: currently, you cannot use typescript wrapper modules - only vanilla js
+        see https://github.com/denoland/deno/issues/5525
 
 ARGS:
   [path]    directory path of the new plugin
