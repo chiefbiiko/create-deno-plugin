@@ -23,8 +23,7 @@ jobs:
             --allow-env \
             --allow-read \
             --allow-write \
-            --unstable \
-            --dir=/usr/local/bin \
+            --root=/usr/local/bin \
             create-deno-plugin \
             ./main.ts
           create-deno-plugin --async ./demo
