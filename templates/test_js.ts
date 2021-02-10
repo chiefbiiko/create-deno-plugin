@@ -11,7 +11,7 @@ export function testJS(
 ): string {
   return `
 import { assertEquals } from "https://deno.land/std@0.77.0/testing/asserts.ts";
-import { asyncOpWrapper, syncOpWrapper } from "./mod.js";
+import { ${async ? `asyncOpWrapper, ` : ""}syncOpWrapper } from "./mod.js";
 
 Deno.test({
   name: "invoking a sync op from a native plugin",
